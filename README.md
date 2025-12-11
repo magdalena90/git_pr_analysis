@@ -1,4 +1,4 @@
-# PR Visualizations Dashboard
+# PR Visualisations Dashboard
 
 Interactive Dash dashboard for visualizing Pull Request data from Space Intelligence repositories.
 

@@ -1,4 +1,4 @@
-"""Dash dashboard for PR visualizations."""
+"""Dash dashboard for PR visualisations."""
 
 from pathlib import Path
 
@@ -414,7 +414,7 @@ def plot_cumulative_prs_by_user(dataset_selection, year=2025):
 app = Dash(__name__)
 
 app.layout = html.Div([
-    html.H1("PR Visualizations Dashboard", style={'textAlign': 'center', 'fontFamily': 'Avenir'}),
+    html.H1("PR Visualisations Dashboard", style={'textAlign': 'center', 'fontFamily': 'Avenir'}),
 
     html.Div([
         html.Label("Select Dataset:", style={'fontWeight': 'bold', 'fontFamily': 'Avenir'}),
