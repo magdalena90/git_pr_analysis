@@ -1,0 +1,8 @@
+black==24.1.1
+mypy==1.8.0
+pandas-stubs
+pytest
+pytest-mock
+pytest-cov
+testbook
+ruff
