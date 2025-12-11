@@ -48,4 +48,3 @@ Render will automatically deploy your app and provide a URL like `https://pr-vis
 The dashboard requires the following CSV files in the `data/` directory:
 - `all_prs.csv` - Mapper Template repository PRs
 - `all_prs_qgis.csv` - QGIS Plugin repository PRs
-# git_pr_analysis
