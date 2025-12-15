@@ -47,7 +47,7 @@ def plot_cumulative_prs(dataset_selection):
         plot_title_prefix = 'QGIS Plugins PRs'
     elif dataset_selection == 'both':
         df = pd.concat([df_mapper_template_prs, df_qgis_prs], ignore_index=True)
-        plot_title_prefix = 'All PRs'
+        plot_title_prefix = 'Mapper Template & QGIS Plugins PRs'
     else:
         raise ValueError("Invalid selection. Choose 'mapper_template', 'qgis_plugins', or 'both'")
 
@@ -105,9 +105,12 @@ def plot_cumulative_prs(dataset_selection):
         fig.add_trace(go.Scatter(
             x=[],
             y=[],
-            mode='markers',
+            mode='markers+text',
             name=year,
             marker=dict(size=12, color=year_color),
+            text=[],
+            textposition='middle right',
+            textfont=dict(color=year_color, size=12, family='Avenir'),
             showlegend=False
         ))
 
@@ -143,12 +146,15 @@ def plot_cumulative_prs(dataset_selection):
                 frame_data.append(go.Scatter(
                     x=current_point['day_of_year'],
                     y=current_point['cumulative_prs'],
-                    mode='markers',
+                    mode='markers+text',
                     name=year,
-                    marker=dict(size=12, color=year_color)
+                    marker=dict(size=12, color=year_color),
+                    text=[year],
+                    textposition='middle right',
+                    textfont=dict(color=year_color, size=12, family='Avenir')
                 ))
             else:
-                frame_data.append(go.Scatter(x=[], y=[], mode='markers'))
+                frame_data.append(go.Scatter(x=[], y=[], mode='markers+text', text=[]))
 
         frames.append(go.Frame(data=frame_data, name=str(day)))
 
@@ -160,7 +166,7 @@ def plot_cumulative_prs(dataset_selection):
         yaxis_title='Cumulative Number of PRs',
         height=600,
         showlegend=True,
-        font=dict(family='Avenir', size=14),
+        font=dict(family='Space Grotesk', size=14),
         plot_bgcolor='white',
         paper_bgcolor='white',
         xaxis=dict(
@@ -187,7 +193,7 @@ def plot_cumulative_prs(dataset_selection):
             'showactive': False,
             'buttons': [
                 {'label': 'Play', 'method': 'animate', 'args': [None, {
-                    'frame': {'duration': 50, 'redraw': True},
+                    'frame': {'duration': 100, 'redraw': True},
                     'fromcurrent': True,
                     'mode': 'immediate'
                 }]},
@@ -226,7 +232,7 @@ def plot_cumulative_prs_by_user(dataset_selection, year=2025):
         plot_title_prefix = 'QGIS Plugins'
     elif dataset_selection == 'both':
         df = pd.concat([df_mapper_template_prs, df_qgis_prs], ignore_index=True)
-        plot_title_prefix = 'All'
+        plot_title_prefix = 'Mapper Template & QGIS Plugins'
     else:
         raise ValueError("Invalid selection. Choose 'mapper_template', 'qgis_plugins', or 'both'")
 
@@ -271,6 +277,11 @@ def plot_cumulative_prs_by_user(dataset_selection, year=2025):
     if len(df_cumulative) == 0:
         return go.Figure()
 
+    # Identify top 7 users by final cumulative value
+    n = 7
+    final_values = df_cumulative.groupby('user')['cumulative_prs'].max().sort_values(ascending=False)
+    top_n_users = set(final_values.head(n).index)
+
     # Create figure with animation
     fig = go.Figure()
 
@@ -294,12 +305,16 @@ def plot_cumulative_prs_by_user(dataset_selection, year=2025):
             showlegend=True,
             hovertemplate=f'<b>{user}</b><br>Cumulative PRs: %{{y}}<extra></extra>'
         ))
+        show_text = user in top_n_users
         fig.add_trace(go.Scatter(
             x=[],
             y=[],
-            mode='markers',
+            mode='markers+text' if show_text else 'markers',
             name=user,
             marker=dict(size=10, color=user_color),
+            text=[],
+            textposition='middle right' if show_text else None,
+            textfont=dict(color=user_color, size=10, family='Avenir') if show_text else None,
             showlegend=False,
             hovertemplate=f'<b>{user}</b><br>Cumulative PRs: %{{y}}<extra></extra>'
         ))
@@ -334,16 +349,20 @@ def plot_cumulative_prs_by_user(dataset_selection, year=2025):
                 current_point = user_data[user_data['day_of_year'] == max_day_for_user]
 
             if len(current_point) > 0:
+                show_text = user in top_n_users
                 frame_data.append(go.Scatter(
                     x=current_point['day_of_year'],
                     y=current_point['cumulative_prs'],
-                    mode='markers',
+                    mode='markers+text' if show_text else 'markers',
                     name=user,
                     marker=dict(size=10, color=user_color),
+                    text=[user] if show_text else [],
+                    textposition='middle right' if show_text else None,
+                    textfont=dict(color=user_color, size=14, family='Avenir') if show_text else None,
                     hovertemplate=f'<b>{user}</b><br>Cumulative PRs: %{{y}}<extra></extra>'
                 ))
             else:
-                frame_data.append(go.Scatter(x=[], y=[], mode='markers'))
+                frame_data.append(go.Scatter(x=[], y=[], mode='markers', text=[]))
 
         frames.append(go.Frame(data=frame_data, name=str(day)))
 
@@ -355,7 +374,7 @@ def plot_cumulative_prs_by_user(dataset_selection, year=2025):
         yaxis_title='Cumulative Number of PRs',
         height=600,
         showlegend=True,
-        font=dict(family='Avenir', size=14),
+        font=dict(family='Space Grotesk', size=14),
         plot_bgcolor='white',
         paper_bgcolor='white',
         xaxis=dict(
@@ -382,7 +401,7 @@ def plot_cumulative_prs_by_user(dataset_selection, year=2025):
             'showactive': False,
             'buttons': [
                 {'label': 'Play', 'method': 'animate', 'args': [None, {
-                    'frame': {'duration': 50, 'redraw': True},
+                    'frame': {'duration': 160, 'redraw': True},
                     'fromcurrent': True,
                     'mode': 'immediate'
                 }]},
@@ -411,10 +430,11 @@ def plot_cumulative_prs_by_user(dataset_selection, year=2025):
 
 
 # Initialize the Dash app
-app = Dash(__name__)
+external_stylesheets = ['https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap']
+app = Dash(__name__, external_stylesheets=external_stylesheets)
 
 app.layout = html.Div([
-    html.H1("PR Visualisations Dashboard", style={'textAlign': 'center', 'fontFamily': 'Avenir'}),
+    html.H1("PR Visualisations Dashboard", style={'textAlign': 'center', 'fontFamily': 'Space Grotesk'}),
 
     html.Div([
         html.Label("Select Dataset:", style={'fontWeight': 'bold', 'fontFamily': 'Avenir'}),
@@ -423,10 +443,10 @@ app.layout = html.Div([
             options=[
                 {'label': 'Mapper Template PRs', 'value': 'mapper_template'},
                 {'label': 'QGIS Plugin PRs', 'value': 'qgis_plugins'},
-                {'label': 'All PRs', 'value': 'both'}
+                {'label': 'Mapper Template & QGIS Plugins PRs', 'value': 'both'}
             ],
             value='both',
-            style={'width': '300px', 'fontFamily': 'Avenir'}
+            style={'width': '350px', 'fontFamily': 'Avenir'}
         ),
     ], style={'margin': '20px', 'fontFamily': 'Avenir'}),
 
@@ -461,5 +481,5 @@ def update_user_graph(dataset_selection):
 if __name__ == '__main__':
     import os
     port = int(os.environ.get('PORT', 8050))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    app.run(host='0.0.0.0', port=port, debug=True)
 
