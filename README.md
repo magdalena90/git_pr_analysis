@@ -38,13 +38,12 @@ Render will automatically deploy your app and provide a URL like `https://pr-vis
 
 ## Features
 
-- **Dataset Selection**: Choose between Mapper Template PRs, QGIS Plugin PRs, or combined data
+- **Dataset Selection**: Choose between Mapper Template PRs, Space Intelligence PRs, QGIS Plugin PRs, or all combined
 - **Year Comparison**: Animated visualization comparing PR activity between years
 - **User Comparison**: Track individual contributor activity throughout 2025
 - **Custom Aliases**: User-friendly display names for contributors
 
 ## Data Files
 
-The dashboard requires the following CSV files in the `data/` directory:
-- `all_prs.csv` - Mapper Template repository PRs
-- `all_prs_qgis.csv` - QGIS Plugin repository PRs
+The dashboard requires the following CSV file in the `data/` directory:
+- `all_prs_detailed_qgis.csv` - Combined PR data from all repositories (Mapper Template, Space Intelligence, and QGIS Plugin)
